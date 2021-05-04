@@ -7,10 +7,10 @@ most of the time is spend for drawing every frame of sorting
 process, not sorting our array.***
 
 Algorithms:
-*Selection sort,
-*Bubble sort,
-*Insertion sort,
-*Merge sort,
-*Quick sort,
-*Heap sort,
-*Comb sort
+* Selection sort,
+* Bubble sort,
+* Insertion sort,
+* Merge sort,
+* Quick sort,
+* Heap sort,
+* Comb sort
