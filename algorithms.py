@@ -1,163 +1,238 @@
-#  Slection sort
-# Best case: O(N^2)
-# Average case: O(N^2)
-# Worst case: O(N^2)
-import random
-def selection_sort(data):
+import pygame
+import sys
+
+# Drawing our data
+def update_data(surface, data, swap1 = None, swap2 = None):
+	# Depending on number of elements we will have
+	# various spaces and thickness
+	k = 1024/len(data)
+	surface.fill((255, 255, 255))
 	for i in range(len(data)):
-		min_val = i
+		color = (0, 0, 0)
+		# If numbers are swapping we highlight them
+		if i == swap1:
+			color = (0, 255, 0)
+		elif i == swap2:
+			color = (255, 0, 0)
+		pygame.draw.rect(surface, color, (i*k, 512-(data[i]*(k/2)), 1*k, data[i]*(k/2)))
+	pygame.display.update()
 
-		for j in range(i+1, len(data)):
-			if data[j] < data[min_val]:
-				min_val = j
+# Function that helps us check if QUIT was clicked during
+# work of algorithm
+def end_check():
+	for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
 
-		data[i], data[min_val] = data[min_val], data[i]
-		yield data
+class Algorithm:
+	def __init__(self, algo, data, surface):
+		self.surface = surface
+		self.data = data
+		algorithms = {"Selection sort" : self.selection_sort,
+		"Bubble sort" : self.bubble_sort,
+		"Insertion sort" : self.insertion_sort,
+		"Merge sort" : self.mergesort,
+		"Quick sort" : self.quick_sort,
+		"Heap sort" : self.heap_sort,
+		"Comb sort" : self.comb_sort}
+		self.sort = algorithms[algo]
 
-# Bubble sort
-# Best case: O(N)
-# Average case: O(N^2)
-# Worst case: O(N^2)
-def bubble_sort(data):
-	for i in range(len(data)):
-		swapped =  False
+#########################################################################################################################################
+	#  Selection sort
+	def selection_sort(self):
+		for i in range(len(self.data)):
+			min_val = i
 
-		for j in range(len(data)-i-1):
-			if data[j] > data[j+1]:
-				data[j], data[j+1] = data[j+1], data[j]
-				yield data
-				swapped = True
+			for j in range(i+1, len(self.data)):
+				if self.data[j] < self.data[min_val]:
+					min_val = j
 
-		if swapped == False:
-			break
+			self.data[i], self.data[min_val] = self.data[min_val], self.data[i]
+			update_data(self.surface, self.data, i, min_val)
+			end_check()
+		return True
 
-# Insertion sort
-# Best case: O(N)
-# Average case: O(N^2)
-# Worst case: O(N^2)
-def insertion_sort(data):
-	for i in range(1, len(data)):
-		key = data[i]
-		j = i-1
-		while j >= 0 and key < data[j]:
-			data[j+1] = data[j]
-			j -= 1
-			yield data
-		data[j+1] = key
+#########################################################################################################################################
+	# Bubble sort
+	def bubble_sort(self):
+		for i in range(len(self.data)):
+			swapped =  False
 
-# Merge sort
-# Best case: O(N*log(N))
-# Average case: O(N*log(N))
-# Worst case: O(N*log(N))
-def merge_sort(data, start):
-	if len(data) > 1:
-		mid = len(data)//2
+			for j in range(len(self.data)-i-1):
+				if self.data[j] > self.data[j+1]:
+					self.data[j], self.data[j+1] = self.data[j+1], self.data[j]
+					swapped = True
 
-		L = data[:mid]
-		R = data[mid:]
+					update_data(self.surface, self.data, j, j+1)
+					end_check()
 
-		merge_sort(L, 0)
-		merge_sort(R, mid)
+			if swapped == False:
+				break
 
-		i = j = k = 0
+		return True
 
-		while i < len(L) and j < len(R):
-			if L[i] < R[j]:
+#########################################################################################################################################
+	# Insertion sort
+	def insertion_sort(self):
+		for i in range(1, len(self.data)):
+			key = self.data[i]
+			j = i-1
+			while j >= 0 and key < self.data[j]:
+				self.data[j+1] = self.data[j]
+				j -= 1
+
+			self.data[j+1] = key
+			update_data(self.surface, self.data, j+1, i)
+			end_check()
+
+		return True
+
+#########################################################################################################################################
+	# Merge sort
+	# in this program is used iterative version of merge sort
+	# to facilitate visualization
+	def mergesort(self, data=[]):
+		def merge(data, l, m, r):
+			n1 = m - l + 1
+			n2 = r - m
+			L = [0] * n1
+			R = [0] * n2
+			for i in range(0, n1):
+				L[i] = data[l + i]
+			for i in range(0, n2):
+				R[i] = data[m + i + 1]
+
+			i, j, k = 0, 0, l
+			while i < n1 and j < n2:
+				if L[i] > R[j]:
+					data[k] = R[j]
+					j += 1
+				else:
+					data[k] = L[i]
+					i += 1
+				update_data(self.surface, self.data, k)
+				end_check()
+				k += 1
+
+			while i < n1:
 				data[k] = L[i]
+				update_data(self.surface, self.data, k)
+				end_check()
 				i += 1
-			else:
+				k += 1
+
+			while j < n2:
 				data[k] = R[j]
+				update_data(self.surface, self.data, k)
+				end_check()
 				j += 1
-			k += 1
+				k += 1
 
-		while i < len(L):
-			data[k] = L[i]
-			i += 1
-			k += 1
+		if data == []:
+			data = self.data
 
-		while j < len(R):
-			data[k] = R[j]
-			j += 1
-			k += 1
+		current_size = 1
 
-# Quick sort
-# Best case: O(N*log(N))
-# Average case: O(N*log(N))
-# Worst case: O(N^2)
-def quick_sort(data, start, end):
-    if start < end:
-    	pivot_index = start
-    	pivot = data[end]
+		while current_size < len(data) - 1:
+			left = 0
 
-    	for i in range(start, end):
-    		if(data[i] < pivot):
-    			data[i], data[pivot_index] = data[pivot_index], data[i]
-    			pivot_index += 1
-    			yield data
+			while left < len(data) - 1:
+				mid = min((left + current_size - 1), len(data) - 1)
 
-    	data[end], data[pivot_index] = data[pivot_index], data[end]
-    	yield data
+				R = ((2 * current_size + left - 1, len(data) - 1)[2 * current_size + left - 1 > len(data) - 1])
 
-    	yield from quick_sort(data, start, pivot_index - 1)
-    	yield from quick_sort(data, pivot_index + 1, end)
+				merge(data, left, mid, R)
+				left += current_size * 2
 
-# Heap sort
-# Best case: O(N*log(N))
-# Average case: O(N*log(N))
-# Worst case: O(N*log(N))
-def heapify(data, n, i):
-    largest = i
-    l = 2 * i + 1
-    r = 2 * i + 2
+			current_size *= 2
 
-    if l < n and data[largest] < data[l]:
-        largest = l
- 
-    if r < n and data[largest] < data[r]:
-        largest = r
+		return True
 
-    if largest != i:
-        data[i], data[largest] = data[largest], data[i]
-        yield data
+#########################################################################################################################################
+	# Quick sort
+	def quick_sort(self, data=[], start=0, end=0):
+		if data == []:
+			data = self.data
+			end = len(data) - 1
 
-        yield from heapify(data, n, largest)
+		if start < end:
+			pivot_index = start
+			pivot = data[end]
 
-def heap_sort(data):
-    n = len(data)
+			for i in range(start, end):
+				if(data[i] < pivot):
+					data[i], data[pivot_index] = data[pivot_index], data[i]
+					pivot_index += 1
+					update_data(self.surface, data)
+					end_check()
 
-    for i in range(n//2 - 1, -1, -1):
-        yield from heapify(data, n, i)
+			data[end], data[pivot_index] = data[pivot_index], data[end]
+			update_data(self.surface, data, end, pivot_index)
+			end_check()
 
-    for i in range(n-1, 0, -1):
-        data[i], data[0] = data[0], data[i]
-        yield data
-        yield from heapify(data, i, 0)
+			self.quick_sort(data, start, pivot_index - 1)
+			self.quick_sort(data, pivot_index + 1, end)
 
-# Comb sort
-# Best case: O(N*log(N))
-# Average case: O(N^2/2^P) where P is the nuimber of increments
-# Worst case: O(N^2)
-def getNextGap(gap):
-    gap = (gap * 10)/13
-    if gap < 1:
-        return 1
-    return int(gap)
- 
-def comb_sort(data):
-    n = len(data)
- 
-    gap = n
- 
-    swapped = True
+#########################################################################################################################################
+	# Heap sort
+	def heapify(self, data, n, i):
+	    largest = i
+	    l = 2 * i + 1
+	    r = 2 * i + 2
 
-    while gap !=1 or swapped == 1:
+	    if l < n and self.data[largest] < self.data[l]:
+	        largest = l
+	 
+	    if r < n and self.data[largest] < self.data[r]:
+	        largest = r
 
-        gap = getNextGap(gap)
+	    if largest != i:
+	        self.data[i], self.data[largest] = self.data[largest], self.data[i]
+	        update_data(self.surface, self.data, i, largest)
+	        end_check()
 
-        swapped = False
+	        self.heapify(data, n, largest)
 
-        for i in range(0, n-gap):
-            if data[i] > data[i + gap]:
-                data[i], data[i + gap]=data[i + gap], data[i]
-                swapped = True
-                yield data
+	def heap_sort(self):
+	    n = len(self.data)
+
+	    for i in range(n//2 - 1, -1, -1):
+	        self.heapify(self.data, n, i)
+
+	    for i in range(n-1, 0, -1):
+	        self.data[i], self.data[0] = self.data[0], self.data[i]
+	        self.heapify(self.data, i, 0)
+
+	        end_check()
+	    return True
+
+#########################################################################################################################################
+	# Comb sort
+	def getNextGap(self, gap):
+	    gap = (gap * 10)/13
+	    if gap < 1:
+	        return 1
+	    return int(gap)
+	 
+	def comb_sort(self):
+	    n = len(self.data)
+	 
+	    gap = n
+	 
+	    swapped = True
+
+	    while gap !=1 or swapped == 1:
+
+	        gap = self.getNextGap(gap)
+
+	        swapped = False
+
+	        for i in range(0, n-gap):
+	            if self.data[i] > self.data[i + gap]:
+	                self.data[i], self.data[i + gap] = self.data[i + gap], self.data[i]
+	                swapped = True
+
+	                update_data(self.surface, self.data, i, i+gap)
+	                end_check()
+	    return True
