@@ -51,13 +51,14 @@ def visualize(N, algo_name):
 
 	while(True):
 		# Drawing everything during sorting
-		surface.fill((255, 255, 255))
 		done = Sorter.sort() # Run algorithm
 		pygame.display.update()
 
 		# Getting true == end of the algorithm
 		if done == True:
 			break
+		elif done == False:
+			return
 
 	# Setting new title
 	text = "Sort Visualization    Algorithm: %s   Number of Elemetents: %s   Sorting: Done   Click Exit to go back"% (algo_name, N)

@@ -2,7 +2,7 @@ from pages import *
 
 def main():
 	surface = pygame.display.set_mode((600, 700)) # Initializing surface
-	algo_name = "Selection sort"
+	algo_name = "Heap sort"
 	N = 512 # Number of elements
 
 	pygame.display.set_caption("Sort Visualization") # Set title

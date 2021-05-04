@@ -6,24 +6,23 @@ def update_data(surface, data, swap1 = None, swap2 = None):
 	# Depending on number of elements we will have
 	# various spaces and thickness
 	k = 1024/len(data)
-	surface.fill((255, 255, 255))
+	surface.fill((220, 220, 220))
 	for i in range(len(data)):
-		color = (0, 0, 0)
+		color = (90, 90, 255)
 		# If numbers are swapping we highlight them
 		if i == swap1:
-			color = (0, 255, 0)
+			color = (255, 70, 70)
 		elif i == swap2:
-			color = (255, 0, 0)
+			color = (255, 255, 0)
 		pygame.draw.rect(surface, color, (i*k, 512-(data[i]*(k/2)), 1*k, data[i]*(k/2)))
 	pygame.display.update()
 
-# Function that helps us check if QUIT was clicked during
-# work of algorithm
+# Function that stops algorithms when QUIT was clicked
 def end_check():
 	for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				pygame.quit()
-				sys.exit()
+				return True
+
 
 class Algorithm:
 	def __init__(self, algo, data, surface):
@@ -50,7 +49,8 @@ class Algorithm:
 
 			self.data[i], self.data[min_val] = self.data[min_val], self.data[i]
 			update_data(self.surface, self.data, i, min_val)
-			end_check()
+			if end_check():
+				return False
 		return True
 
 #########################################################################################################################################
@@ -65,7 +65,8 @@ class Algorithm:
 					swapped = True
 
 					update_data(self.surface, self.data, j, j+1)
-					end_check()
+					if end_check():
+						return False
 
 			if swapped == False:
 				break
@@ -84,7 +85,8 @@ class Algorithm:
 
 			self.data[j+1] = key
 			update_data(self.surface, self.data, j+1, i)
-			end_check()
+			if end_check():
+				return False
 
 		return True
 
@@ -112,22 +114,26 @@ class Algorithm:
 					data[k] = L[i]
 					i += 1
 				update_data(self.surface, self.data, k)
-				end_check()
+				if end_check():
+					return False
 				k += 1
 
 			while i < n1:
 				data[k] = L[i]
 				update_data(self.surface, self.data, k)
-				end_check()
+				if end_check():
+					return False
 				i += 1
 				k += 1
 
 			while j < n2:
 				data[k] = R[j]
 				update_data(self.surface, self.data, k)
-				end_check()
+				if end_check():
+					return False
 				j += 1
 				k += 1
+
 
 		if data == []:
 			data = self.data
@@ -142,7 +148,9 @@ class Algorithm:
 
 				R = ((2 * current_size + left - 1, len(data) - 1)[2 * current_size + left - 1 > len(data) - 1])
 
-				merge(data, left, mid, R)
+				run = merge(data, left, mid, R)
+				if run == False:
+					return False
 				left += current_size * 2
 
 			current_size *= 2
@@ -165,47 +173,51 @@ class Algorithm:
 					data[i], data[pivot_index] = data[pivot_index], data[i]
 					pivot_index += 1
 					update_data(self.surface, data)
-					end_check()
+				if end_check():
+					return False
 
 			data[end], data[pivot_index] = data[pivot_index], data[end]
 			update_data(self.surface, data, end, pivot_index)
-			end_check()
+			if end_check():
+				return False
 
 			self.quick_sort(data, start, pivot_index - 1)
 			self.quick_sort(data, pivot_index + 1, end)
 
 #########################################################################################################################################
 	# Heap sort
-	def heapify(self, data, n, i):
-	    largest = i
-	    l = 2 * i + 1
-	    r = 2 * i + 2
-
-	    if l < n and self.data[largest] < self.data[l]:
-	        largest = l
-	 
-	    if r < n and self.data[largest] < self.data[r]:
-	        largest = r
-
-	    if largest != i:
-	        self.data[i], self.data[largest] = self.data[largest], self.data[i]
-	        update_data(self.surface, self.data, i, largest)
-	        end_check()
-
-	        self.heapify(data, n, largest)
-
 	def heap_sort(self):
-	    n = len(self.data)
+		def heapify(data, n, i):
+		    largest = i
+		    l = 2 * i + 1
+		    r = 2 * i + 2
 
-	    for i in range(n//2 - 1, -1, -1):
-	        self.heapify(self.data, n, i)
+		    if l < n and data[largest] < data[l]:
+		        largest = l
+		 
+		    if r < n and data[largest] < data[r]:
+		        largest = r
 
-	    for i in range(n-1, 0, -1):
-	        self.data[i], self.data[0] = self.data[0], self.data[i]
-	        self.heapify(self.data, i, 0)
+		    if largest != i:
+		        data[i], data[largest] = data[largest], data[i]
+		        update_data(self.surface, self.data, i, largest)
+		        heapify(data, n, largest)
 
-	        end_check()
-	    return True
+
+		n = len(self.data)
+
+		for i in range(n//2 - 1, -1, -1):
+		    run = heapify(self.data, n, i)
+		    if end_check():
+		    	return False
+
+		for i in range(n-1, 0, -1):
+		    self.data[i], self.data[0] = self.data[0], self.data[i]
+		    update_data(self.surface, self.data, i, 0)
+		    run = heapify(self.data, i, 0)
+		    if end_check():
+		    	return False
+		return True
 
 #########################################################################################################################################
 	# Comb sort
@@ -234,5 +246,6 @@ class Algorithm:
 	                swapped = True
 
 	                update_data(self.surface, self.data, i, i+gap)
-	                end_check()
+	                if end_check():
+	                	return False
 	    return True
