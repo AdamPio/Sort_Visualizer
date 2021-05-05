@@ -45,7 +45,10 @@ def visualize(N, algo_name):
 	pygame.display.set_caption(text)
 
 	surface = pygame.display.set_mode((1024, 512)) # Changing display to bigger size to show up to 1024 elements
-	data = random.sample(range(N), N) # Get data
+	data = []
+	for i in range(N):
+		number = random.randint(0, N)
+		data.append(number)
 	Sorter = Algorithm(algo_name, data, surface) # Get sorting algorithm
 
 
