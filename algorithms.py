@@ -34,7 +34,8 @@ class Algorithm:
 		"Merge sort" : self.mergesort,
 		"Quick sort" : self.quick_sort,
 		"Heap sort" : self.heap_sort,
-		"Comb sort" : self.comb_sort}
+		"Comb sort" : self.comb_sort,
+		"Radix sort" : self.radix_sort}
 		self.sort = algorithms[algo]
 
 #########################################################################################################################################
@@ -94,8 +95,7 @@ class Algorithm:
 	# Merge sort
 	# in this program is used iterative version of merge sort
 	# to facilitate visualization
-	def mergesort(self, data=[]):
-		def merge(data, l, m, r):
+	def merge(self, data, l, m, r):
 			n1 = m - l + 1
 			n2 = r - m
 			L = [0] * n1
@@ -134,7 +134,7 @@ class Algorithm:
 				j += 1
 				k += 1
 
-
+	def mergesort(self, data=[]):
 		if data == []:
 			data = self.data
 
@@ -148,7 +148,7 @@ class Algorithm:
 
 				R = ((2 * current_size + left - 1, len(data) - 1)[2 * current_size + left - 1 > len(data) - 1])
 
-				run = merge(data, left, mid, R)
+				run = self.merge(data, left, mid, R)
 				if run == False:
 					return False
 				left += current_size * 2
@@ -186,8 +186,7 @@ class Algorithm:
 
 #########################################################################################################################################
 	# Heap sort
-	def heap_sort(self):
-		def heapify(data, n, i):
+	def heapify(self, data, n, i):
 		    largest = i
 		    l = 2 * i + 1
 		    r = 2 * i + 2
@@ -201,20 +200,19 @@ class Algorithm:
 		    if largest != i:
 		        data[i], data[largest] = data[largest], data[i]
 		        update_data(self.surface, self.data, i, largest)
-		        heapify(data, n, largest)
+		        self.heapify(data, n, largest)
 
-
+	def heap_sort(self):
 		n = len(self.data)
 
 		for i in range(n//2 - 1, -1, -1):
-		    run = heapify(self.data, n, i)
+		    run = self.heapify(self.data, n, i)
 		    if end_check():
 		    	return False
 
 		for i in range(n-1, 0, -1):
 		    self.data[i], self.data[0] = self.data[0], self.data[i]
-		    update_data(self.surface, self.data, i, 0)
-		    run = heapify(self.data, i, 0)
+		    run = self.heapify(self.data, i, 0)
 		    if end_check():
 		    	return False
 		return True
@@ -249,3 +247,44 @@ class Algorithm:
 	                if end_check():
 	                	return False
 	    return True
+
+#########################################################################################################################################
+	# Radix sort
+	def countingSort(self, data, exp1):
+		n = len(data)
+
+		output = [0] * n
+		count = [0] * 10
+
+		for i in range(n):
+		    index = (data[i] / exp1)
+		    count[int(index % 10)] += 1
+
+		for i in range(1, 10):
+			count[i] += count[i - 1]
+
+
+		i = n - 1
+		while i >= 0:
+			index = (data[i] / exp1)
+			count[int(index % 10)] -= 1
+			output[count[int(index % 10)]] = data[i]
+			i -= 1
+
+		i = 0
+		for i in range(n):
+		    data[i] = output[i]
+		    update_data(self.surface, self.data, i)
+		if end_check():
+			return False
+
+	def radix_sort(self):
+		max_digits = max(self.data)
+		max_digits = str(max_digits)
+		exp = 1
+
+		for i in range(len(max_digits)):
+			self.countingSort(self.data, exp)
+			exp *= 10
+
+		return True

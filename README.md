@@ -13,4 +13,5 @@ Algorithms:
 * Merge sort,
 * Quick sort,
 * Heap sort,
-* Comb sort
+* Comb sort,
+* Radix sort

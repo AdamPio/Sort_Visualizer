@@ -75,16 +75,17 @@ def visualize(N, algo_name):
 
 def algorithm_page(surface, logo):
 	# Creating list of algorithms
-	algorithms = ["Selection sort", "Bubble sort", "Insertion sort", "Merge sort", "Quick sort", "Heap sort", "Comb sort"]
+	algorithms = ["Selection sort", "Bubble sort", "Insertion sort", "Merge sort", "Quick sort", "Heap sort", "Comb sort", "Radix sort"]
 
 	# Creating buttons
-	selection_button = Button(surface, "Selection sort", 150, 220, 50, 300, FONT_PATH_TEXT, 40)
-	bubble_button = Button(surface, "Bubble sort", 150, 290, 50, 300, FONT_PATH_TEXT, 40)
-	insertion_button = Button(surface, "Insertion sort", 150, 360, 50, 300, FONT_PATH_TEXT, 40)
-	merge_button = Button(surface, "Merge sort", 150, 430, 50, 300, FONT_PATH_TEXT, 40)
-	quick_button = Button(surface, "Quick sort", 150, 500, 50, 300, FONT_PATH_TEXT, 40)
-	heap_button = Button(surface, "Heap sort", 150, 570, 50, 300, FONT_PATH_TEXT, 40)
-	comb_button = Button(surface, "Comb sort", 150, 640, 50, 300, FONT_PATH_TEXT, 40)
+	selection_button = Button(surface, "Selection sort", 70, 220, 50, 200, FONT_PATH_TEXT, 40)
+	bubble_button = Button(surface, "Bubble sort", 330, 220, 50, 200, FONT_PATH_TEXT, 40)
+	insertion_button = Button(surface, "Insertion sort", 70, 290, 50, 200, FONT_PATH_TEXT, 40)
+	merge_button = Button(surface, "Merge sort", 330, 290, 50, 200, FONT_PATH_TEXT, 40)
+	quick_button = Button(surface, "Quick sort", 70, 360, 50, 200, FONT_PATH_TEXT, 40)
+	heap_button = Button(surface, "Heap sort", 330, 360, 50, 200, FONT_PATH_TEXT, 40)
+	comb_button = Button(surface, "Comb sort", 70, 430, 50, 200, FONT_PATH_TEXT, 40)
+	radix_button = Button(surface, "Radix sort", 330, 430, 50, 200, FONT_PATH_TEXT, 40)
 
 	while(True):
 		# Drawing everything
@@ -97,6 +98,7 @@ def algorithm_page(surface, logo):
 		quick_button.draw_button()
 		heap_button.draw_button()
 		comb_button.draw_button()
+		radix_button.draw_button()
 		pygame.display.update()
 
 		for event in pygame.event.get():
@@ -119,6 +121,8 @@ def algorithm_page(surface, logo):
 					return algorithms[5]
 				elif comb_button.rect.collidepoint(pygame.mouse.get_pos()):
 					return algorithms[6]
+				elif radix_button.rect.collidepoint(pygame.mouse.get_pos()):
+					return algorithms[7]
 
 def number_page(surface, logo):
 	# Creating buttons
